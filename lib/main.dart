@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
+import 'package:pomodoro_timer/pauseButton.dart';
+import 'package:pomodoro_timer/resetButton.dart';
 import 'dart:async';
+import './tomato.dart';
+import './startButton.dart';
+import './pauseButton.dart';
+import './resumeButton.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+
   runApp(MyApp());
 }
 
@@ -38,15 +45,56 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   //CountdownTimerController controller;
-  
+  int counter = 0;
+  Timer? mytimer;
+  bool paused = false;
+  bool onGoing = false;
+  int pomodoros = 0;
 
-
-  void handleTimeout() {
-    print("Something");
+  void _startTimer() {
+    setState(() {
+      onGoing = true;
+      paused = false;
+    });
+    mytimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        counter++;
+      });
+    });
   }
 
-  Timer scheduleTimeout([int milliseconds = 5000]) =>
-      Timer(Duration(milliseconds: milliseconds), handleTimeout);
+  void _pauseTimer() {
+    setState(() {
+      paused = true;
+    });
+
+    mytimer!.cancel();
+    mytimer = null;
+  }
+
+  void _resumeTimer() {
+    setState(() {
+      paused = false;
+    });
+
+    mytimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        counter++;
+      });
+    });
+  }
+
+  void _resetTimer() {
+    setState(() {
+      onGoing = false;
+      paused = false;
+      counter = 0;
+    });
+
+    if (mytimer == null) return;
+    mytimer!.cancel();
+    mytimer = null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,49 +106,19 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Stack(alignment: Alignment.center, children: [
-              FittedBox(
-                  child: Image.asset("assets/tomato2.png",
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.width)),
-              //To be replaced by Progress bar
-              Text("ProgressBar")
-            ]),
+            //The Tomato image and progress bar joined together with a Stack
+            Tomato(counter),
+            //Some padding to put buttons on bottom
             SizedBox(height: 50),
-            Container(
-              height: 100,
-              width: 200,
-              child: FittedBox(
-                child: ElevatedButton(
-                    onPressed: () {
-                      scheduleTimeout(5 * 1000);
-                    }, //startTimer,
-                    child: Text(
-                      "START",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(221, 83, 83, 1)),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).accentColor)),
-              ),
-            ),
-            Container(
-              height: 50,
-              width: 100,
-              child: FittedBox(
-                child: ElevatedButton(
-                    onPressed: () {},
-                    child: Text(
-                      "RESET",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(237, 219, 192, 1)),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Color.fromRGBO(221, 83, 83, 1))),
-              ),
-            )
+
+            //Output which buttton (Start, Pause, Resume) 
+            if (!onGoing && !paused)
+              StartButton(_startTimer)
+            else if (onGoing && !paused)
+              PauseButton(_pauseTimer)
+            else if (paused)
+              ResumeButton(_resumeTimer),
+            ResetButton(_resetTimer),
           ],
         ),
       ),
