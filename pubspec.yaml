@@ -37,6 +37,9 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   flutter_countdown_timer: ^4.1.0
+  flutter_ringtone_player: ^3.2.0
+  audioplayers: ^1.1.1
+  just_audio: ^0.9.30
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +67,9 @@ flutter:
   assets:
     - assets/tomato.png
     - assets/tomato2.png
+    - assets/angry_tomato.png
+    - assets/relaxed_tomato.png
+    - assets/ding.mp3
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

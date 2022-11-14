@@ -1,19 +1,51 @@
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
+import 'constants.dart' as Constants;
 
 class Tomato extends StatelessWidget {
-   final counter;
-    Tomato(this.counter);
+  final int counter;
+  final String message;
+  double get value {
+    if (message == Constants.WORK_MESSAGE) {
+      return counter.toDouble() / Constants.WORK_LENGTH;
+    } else if (message == Constants.QUICK_BREAK_MESSAGE) {
+      return counter.toDouble() / Constants.QUICK_BREAK_LENGTH;
+    } else if (message == Constants.LONG_BREAK_MESSAGE) {
+      return counter.toDouble() / Constants.LONG_BREAK_LENGTH;
+    } else
+      return 0;
+  }
+
+  String get image_path {
+     if (message == ""){
+      return "assets/tomato2.png";
+     }
+    else if  (message == Constants.WORK_MESSAGE){
+      return "assets/angry_tomato.png";
+    }
+    else {
+      return "assets/relaxed_tomato.png";
+    }
+  }
+  
+
+  Color get tomatoColor {
+    if (message == Constants.WORK_MESSAGE)
+      return Color.fromRGBO(255, 210, 48, 1);
+    else
+      return Color.fromARGB(255, 255, 163, 244);
+  }
+
+  Tomato(this.counter, this.message);
   @override
   Widget build(BuildContext context) {
-   
     return Stack(alignment: Alignment.center, children: [
       FittedBox(
-          child: Image.asset("assets/tomato2.png",
+          child: Image.asset(image_path,
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.width)),
-      //To be replaced by Progress bar
+      //Progress bar
       SizedBox(
         height: 65,
         width: 330,
@@ -21,9 +53,17 @@ class Tomato extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
           child: LinearProgressIndicator(
             backgroundColor: Colors.white,
-            value: counter.toDouble()/25.00,
-            color: Color.fromRGBO(255, 210, 48, 1),
+            value: value,
+            color: tomatoColor,
           ),
+        ),
+      ),
+      Text(
+        message,
+        style: TextStyle(
+          letterSpacing: 5.0,
+          fontWeight: FontWeight.bold,
+          fontSize: 30,
         ),
       )
     ]);

@@ -7,6 +7,9 @@ import './tomato.dart';
 import './startButton.dart';
 import './pauseButton.dart';
 import './resumeButton.dart';
+import 'constants.dart' as Constants;
+import './tomatoCounter.dart';
+import 'package:just_audio/just_audio.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,17 +53,37 @@ class _MyHomePageState extends State<MyHomePage> {
   bool paused = false;
   bool onGoing = false;
   int pomodoros = 0;
+  String message = "";
+
+  _MyHomePageState() {
+  }
+
+  final AudioPlayer player = new AudioPlayer();
+  final alarmAudioPath = "ding.mp3";
 
   void _startTimer() {
     setState(() {
+      message = Constants.WORK_MESSAGE;
       onGoing = true;
       paused = false;
     });
+
     mytimer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
-        counter++;
+        updateModel();
       });
     });
+  }
+
+  void loadSound() async {
+   
+    await player.setAsset("assets/ding.mp3");
+  }
+
+  void playSound() async {
+     await player.setAsset("assets/ding.mp3");
+    await player.setVolume(.5);
+    await player.play();
   }
 
   void _pauseTimer() {
@@ -75,20 +98,56 @@ class _MyHomePageState extends State<MyHomePage> {
   void _resumeTimer() {
     setState(() {
       paused = false;
+      //updateModel();
     });
 
     mytimer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
-        counter++;
+        updateModel();
       });
     });
   }
 
+  void updateModel() {
+    if (message == Constants.WORK_MESSAGE && counter == Constants.WORK_LENGTH)
+      pomodoros++;
+
+    //  SystemSound.play(SystemSoundType.alert);
+
+    // playSound();
+
+    if (message == Constants.WORK_MESSAGE &&
+        counter == Constants.WORK_LENGTH &&
+        pomodoros % 3 == 0) {
+      counter = 0;
+      message = Constants.LONG_BREAK_MESSAGE;
+      playSound();
+    } else if (message == Constants.WORK_MESSAGE &&
+        counter == Constants.WORK_LENGTH) {
+      counter = 0;
+      message = Constants.QUICK_BREAK_MESSAGE;
+      playSound();
+    } else if (message == Constants.QUICK_BREAK_MESSAGE &&
+        counter == Constants.QUICK_BREAK_LENGTH) {
+      counter = 0;
+      message = Constants.WORK_MESSAGE;
+      playSound();
+    } else if (message == Constants.LONG_BREAK_MESSAGE &&
+        counter == Constants.LONG_BREAK_LENGTH) {
+      counter = 0;
+      message = Constants.WORK_MESSAGE;
+      playSound();
+    }
+    counter++;
+  }
+
   void _resetTimer() {
     setState(() {
+      message = "";
       onGoing = false;
       paused = false;
       counter = 0;
+      pomodoros = 0;
     });
 
     if (mytimer == null) return;
@@ -106,12 +165,13 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            TomatoCounter(pomodoros),
             //The Tomato image and progress bar joined together with a Stack
-            Tomato(counter),
+            Tomato(counter, message),
             //Some padding to put buttons on bottom
             SizedBox(height: 50),
 
-            //Output which buttton (Start, Pause, Resume) 
+            //Output which buttton (Start, Pause, Resume)
             if (!onGoing && !paused)
               StartButton(_startTimer)
             else if (onGoing && !paused)
