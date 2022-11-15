@@ -1,15 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pomodoro_timer/pauseButton.dart';
-import 'package:pomodoro_timer/resetButton.dart';
-import 'dart:async';
+
+import 'package:just_audio/just_audio.dart';
+
 import './tomato.dart';
 import './startButton.dart';
 import './pauseButton.dart';
 import './resumeButton.dart';
 import 'constants.dart' as Constants;
 import './tomatoCounter.dart';
-import 'package:just_audio/just_audio.dart';
+import './resetButton.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,8 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int pomodoros = 0;
   String message = "";
 
-  _MyHomePageState() {
-  }
+  _MyHomePageState() {}
 
   final AudioPlayer player = new AudioPlayer();
   final alarmAudioPath = "ding.mp3";
@@ -76,12 +77,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void loadSound() async {
-   
     await player.setAsset("assets/ding.mp3");
   }
 
   void playSound() async {
-     await player.setAsset("assets/ding.mp3");
+    await player.setAsset("assets/ding.mp3");
     await player.setVolume(.5);
     await player.play();
   }
