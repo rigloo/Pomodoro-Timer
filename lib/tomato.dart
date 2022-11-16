@@ -47,10 +47,10 @@ class Tomato extends StatelessWidget {
               height: MediaQuery.of(context).size.width)),
       //Progress bar
       SizedBox(
-        height: 65,
-        width: 330,
+        height: MediaQuery.of(context).size.height * .1,
+        width: MediaQuery.of(context).size.width * .8,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(40),
           child: LinearProgressIndicator(
             backgroundColor: Colors.white,
             value: value,
