@@ -171,6 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TomatoCounter(pomodoros),
+            SizedBox(height: 50),
             //The Tomato image and progress bar joined together with a Stack
             Tomato(counter, message),
             //Some padding to put buttons on bottom
