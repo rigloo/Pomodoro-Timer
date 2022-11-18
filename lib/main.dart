@@ -12,6 +12,7 @@ import './resumeButton.dart';
 import 'constants.dart' as Constants;
 import './tomatoCounter.dart';
 import './resetButton.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +21,7 @@ Future<void> main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-    await JustAudioBackground.init(
+  await JustAudioBackground.init(
     androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
@@ -62,11 +63,6 @@ class _MyHomePageState extends State<MyHomePage> {
   int pomodoros = 0;
   String message = "";
 
-  _MyHomePageState() {}
-
-  final AudioPlayer player = new AudioPlayer();
-  final alarmAudioPath = "ding.mp3";
-
   void _startTimer() {
     setState(() {
       message = Constants.WORK_MESSAGE;
@@ -81,14 +77,13 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void loadSound() async {
-    await player.setAsset("assets/ding.mp3");
-  }
-
-  void playSound() async {
-    await player.setAsset("assets/ding.mp3");
-    await player.setVolume(.5);
-    await player.play();
+  void playSound() {
+    
+    FlutterRingtonePlayer.playAlarm(
+      looping: false, // Android only - API >= 28
+      volume: 0.2, // Android only - API >= 28
+      asAlarm: true, // Android only - all APIs
+    );
   }
 
   void _pauseTimer() {
