@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 
 import './tomato.dart';
 import './startButton.dart';
@@ -12,28 +10,25 @@ import './resumeButton.dart';
 import 'constants.dart' as Constants;
 import './tomatoCounter.dart';
 import './resetButton.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import './services/NotificationService.dart';
 
-Future<void> main() async {
+main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
-  await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
-    androidNotificationChannelName: 'Audio playback',
-    androidNotificationOngoing: true,
-  );
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.brown,
@@ -54,8 +49,34 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   //CountdownTimerController controller;
+
+  late final NotificationService service;
+
+  @override
+  void initState() {
+    // WidgetsBinding.instance.addObserver(this);
+    service = NotificationService();
+    service.initialize();
+    super.initState();
+  }
+
+  @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   print(state);
+
+  //   super.didChangeAppLifecycleState(state);
+  // }
+
+  @override
+  // void dispose() {
+  //   // TODO: implement dispose
+  //   WidgetsBinding.instance.removeObserver(this);
+
+  //   super.dispose();
+  // }
+
   int counter = 0;
   Timer? mytimer;
   bool paused = false;
@@ -70,20 +91,16 @@ class _MyHomePageState extends State<MyHomePage> {
       paused = false;
     });
 
+    if (mytimer != null) {
+      mytimer!.cancel();
+      mytimer = null;
+    }
+
     mytimer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         updateModel();
       });
     });
-  }
-
-  void playSound() {
-    
-    FlutterRingtonePlayer.playAlarm(
-      looping: false, // Android only - API >= 28
-      volume: 0.2, // Android only - API >= 28
-      asAlarm: true, // Android only - all APIs
-    );
   }
 
   void _pauseTimer() {
@@ -93,6 +110,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     mytimer!.cancel();
     mytimer = null;
+  }
+
+  void showNotification(String msg) async {
+    await service.showNotification(id: 0, title: "Pomodoro Timer", body: msg);
   }
 
   void _resumeTimer() {
@@ -121,22 +142,26 @@ class _MyHomePageState extends State<MyHomePage> {
         pomodoros % 3 == 0) {
       counter = 0;
       message = Constants.LONG_BREAK_MESSAGE;
-      playSound();
+      //playSound();
+      showNotification("Time for long break!");
     } else if (message == Constants.WORK_MESSAGE &&
         counter == Constants.WORK_LENGTH) {
       counter = 0;
       message = Constants.QUICK_BREAK_MESSAGE;
-      playSound();
+      // playSound();
+      showNotification("Time for quick break!");
     } else if (message == Constants.QUICK_BREAK_MESSAGE &&
         counter == Constants.QUICK_BREAK_LENGTH) {
       counter = 0;
       message = Constants.WORK_MESSAGE;
-      playSound();
+      //playSound();
+      showNotification("Time to work!");
     } else if (message == Constants.LONG_BREAK_MESSAGE &&
         counter == Constants.LONG_BREAK_LENGTH) {
       counter = 0;
       message = Constants.WORK_MESSAGE;
-      playSound();
+      //playSound();
+      showNotification("Time to work!");
     }
     counter++;
   }

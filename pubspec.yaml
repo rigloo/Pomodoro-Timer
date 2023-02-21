@@ -37,14 +37,24 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   flutter_countdown_timer: ^4.1.0
-  flutter_ringtone_player: ^3.2.0
-  audioplayers: ^1.1.1
-  just_audio: ^0.9.30
-  just_audio_background: ^0.0.1-beta.8
+  flutter_local_notifications: ^12.0.3+1
+  
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.11.0
+  flutter_native_splash: ^2.2.14
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "dev_assets/icon.png"
+  adaptive_icon_background: "#dbc8ac"
+  adaptive_icon_foreground: "dev_assets/icon_adaptive.png"
+
+flutter_native_splash:
+  color: "#dbc8ac"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -70,7 +80,6 @@ flutter:
     - assets/tomato2.png
     - assets/angry_tomato.png
     - assets/relaxed_tomato.png
-    - assets/ding.mp3
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
