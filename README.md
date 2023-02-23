@@ -1,16 +1,14 @@
 # pomodoro_timer
 
-A new Flutter project.
+This is a Pomodoro timer application written in Flutter/Dart.
+
+The pomodoro timer system consists of time intervals of Work (25 min) then a Quick Break (5 min)
+This is one Pomodoro. After 3 or so Pomodoros you take a Long Break (30 min).
+
+![Screenshot_1677190239](https://user-images.githubusercontent.com/23559160/221043735-9df88b64-a0b0-4b29-9203-b420f865871a.png)
+![Screenshot_1677190199](https://user-images.githubusercontent.com/23559160/221043741-43e58cc4-ca38-4e78-a6f6-ce179a869760.png)
+![Screenshot_1677190195](https://user-images.githubusercontent.com/23559160/221043752-af50fdd2-0b69-452d-beea-82b466d064bc.png)
+
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
